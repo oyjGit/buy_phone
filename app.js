@@ -13,6 +13,7 @@ App({
       success: res => {
         // 发送 res.code 到后台换取 openId, sessionKey, unionId
         if (res.code) {
+          console.log(res.code);
           //发起网络请求
           wx.request({
             // url: 'https://api.weixin.qq.com/sns/jscode2session',
@@ -23,9 +24,18 @@ App({
             //   grant_type: authorization_code
             // }
             url: 'https://192.168.58.3/customerManager/login',
+            method : 'POST',
+            header: { 'content-type': 'application/json' },
+            dataType : 'json',
             data: {
-              "code":"fuck test"
-            }
+              code: res.code
+            },
+            success: function (res) {
+              return typeof cb == "function" && cb(res.data)
+            },
+            fail: function () {
+              return typeof cb == "function" && cb(false)
+            } 
           })
         } else {
           console.log('获取用户登录态失败！' + res.errMsg)
